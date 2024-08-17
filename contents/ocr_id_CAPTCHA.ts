@@ -2,10 +2,7 @@ import type { PlasmoCSConfig } from "plasmo"
 import { createWorker,PSM } from 'tesseract.js';
 import '/lib/ocr_captcha.ts';
 import { ocr_captcha } from "~lib/ocr_captcha";
-import { prepare } from "~lib/prepare";
-import { prepare_manual } from "~lib/prepare_manual";
 import {ImageClassifier} from "lib/ocr_captcha_onnx"
-
 
 export const config: PlasmoCSConfig = {
   matches: ["*://id.scu.edu.cn/*"],
@@ -19,7 +16,7 @@ img.onload=()=>{
   process();
 }
 img.addEventListener("click",function(){
-  process();
+  //process();
 });
 
 
@@ -32,7 +29,7 @@ async function process():Promise<void>{
     var result=await ImageClassifier.classification(img);
     input.value=result;
   }catch(e){
-    console.log(e)
+    console.error(e)
   }
 }
 

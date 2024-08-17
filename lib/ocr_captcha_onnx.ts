@@ -9,12 +9,8 @@ export  class ImageClassifier {
     private static charset: string[];
 
     public static async classification(imgElement: HTMLImageElement): Promise<string> {
-        //const a=require('onnxruntime-web');
-        //console.log(a)
-        //console.log("invoked1");
         await ImageClassifier.loadModel().catch(e=>{
-            console.log(e);
-            
+            console.error(e);
         });
         
         const data=imgElement.src;
@@ -63,17 +59,39 @@ export  class ImageClassifier {
 
 
     private static isLoaded=false;
+    private static extensionsId(){
+        if(!!chrome.runtime){ // 方法一
+            return chrome.runtime?.id || '-1';
+        }else if(chrome.i18n){ // 方法二
+            return chrome.i18n.getMessage("@@extension_id") || '-1';
+        }
+        return '-1'
+    }
     public static async loadModel(): Promise<void> {
         if(this.isLoaded){
             return;
         }
-        
-        if(ort.InferenceSession==null){
-            console.error("ort.InferenceSession is null!");
+        var src="https://cdn.jsdelivr.net/npm/onnxruntime-web@1.19.0/dist/"
+        //src=`chrome-extension://${this.extensionsId()}/node_modules/onnxruntime-web/dist/`;
+        ort.env.wasm.wasmPaths= src;
+        ort.env.wasm.proxy=true;
+        ort.env.wasm.numThreads=1;
+        ort.env.logLevel='verbose'
+        try{
+            this.ortSession = await ort.InferenceSession.create(
+                "/resources/common_old.onnx",
+                { 
+                    executionProviders: ['wasm'], 
+                    graphOptimizationLevel: 'all' 
+                }
+            );
+            console.log("model loaded");
+            this.isLoaded=true;
+        }catch(e){
+            console.error(e)
+            console.log("model load error");
         }
         
-        this.ortSession = await ort.InferenceSession.create("common_old.onnx");
-        //console.log("model loaded");
         this.charset= ["", "掀", "袜", "顧", "徕", "榱", "荪", "浡", "其", "炎", "玉", "恩", "劣", "徽",
             "廉", "桂", "拂",
             "鳊", "撤",
@@ -1371,6 +1389,6 @@ export  class ImageClassifier {
             "鞧", "翯", "釘",
             "铢", "窨",
             "設", "⒆"];
-            this.isLoaded=true;
+
     }
 }

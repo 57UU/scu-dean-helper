@@ -1,4 +1,5 @@
 import { useState } from "react"
+import * as ort from 'onnxruntime-web';
 
 function IndexPopup() {
   
