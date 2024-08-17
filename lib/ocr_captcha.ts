@@ -1,5 +1,4 @@
 import { createWorker,PSM, type RecognizeOptions,OEM, type ImageLike } from 'tesseract.js';
-import Jimp from "jimp";
 
 
 export async function ocr_captcha( 
