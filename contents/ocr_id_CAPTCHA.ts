@@ -26,6 +26,7 @@ async function process():Promise<void>{
     var result=await ocr_external(img);
     console.log("ocr: "+result)
     input.value=result;
+    input.dispatchEvent(new Event('input'));
   }catch(e){
     console.error(e)
   }
